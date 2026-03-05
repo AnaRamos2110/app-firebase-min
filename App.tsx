@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Alert, Text, View, TextInput, Pressable, ScrollView, Plataform, KeyboardAvoidingView } from 'react-native';
+import { Alert, Text, View, TextInput, Pressable, ScrollView, Platform, KeyboardAvoidingView } from 'react-native';
 
 import { auth, db } from "./src/lib/firebase";
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
@@ -35,7 +35,7 @@ export default function App() {
             value={password}
             onChangeText={setPassword}
             placeholder="senha"
-            securityTextEntry
+            secureTextEntry
           ></TextInput>
           <View>
             <Pressable>
