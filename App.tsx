@@ -11,54 +11,96 @@ type Note = { id: string, text: string };
 export default function App() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  // Auth form
+  // auth form
   const [email, setEmail] = useState('fjsilva@sp.senac.br');
   const [password, setPassword] = useState("a1b2c3");
 
   //DB Firestore
   const [noteText, setNoteText] = useState("Primeira anotação");
   const [notes, setNotes] = useState<Note[]>([]);
+
+   useEffect( () =>{
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUserEmail(u?.email ?? null);
+    });
+    return unsub;
+  },[])
+
+  async function handleRegister(){
+    try {
+      console.log("Register -> ", email.trim());
+      const create = await createUserWithEmailAndPassword(auth, email.trim(), password)
+      console.log("Register OK uid:", create.user.uid);
+      Alert.alert("Conta criada com sucesso!", create.user.email ?? ""); //ps, não esquece q as interrogações servem pra um tipo de if aqui ok? rs
+    } catch (error) {
+      console.log("Register failed", error);
+    }
+  }
+
+  // async function handleLogin(){
+    
+  // }
+
+  // async function handleLogout() {
+
+  // }
+
   return (
-    <KeyboardAvoidingView>
-      <ScrollView>
-        <Text>Expo/React + Firebase(mínimo)</Text>
-        <View>
-          <Text>Auth</Text>
-          <Text>Usúario logado: {userEmail ?? "nenhum"}</Text>
+    <KeyboardAvoidingView
+    style={{flex:1, marginTop:25}}
+    behavior={Platform.select({ios:"padding", android:"height"})}
+    >
+      <ScrollView contentContainerStyle={{padding:16, gap:16}}>
+        <Text 
+        style={{fontSize:22, fontWeight:"700"}}>Expo/React + Firebase(mínimo)</Text>
+        <View
+        style={{padding:12, borderWidth:1, borderRadius:12, gap:10}}>
+          <Text style={{fontSize:16, fontWeight:"600"}}>Auth</Text>
+          <Text>Usuario logado: {userEmail ?? "nenhum"}</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
             placeholder="email"
             autoCapitalize="none"
+            style={{borderWidth:1, borderRadius:10, padding:10}}
           ></TextInput>
           <TextInput
             value={password}
             onChangeText={setPassword}
             placeholder="senha"
             secureTextEntry
+            style={{borderWidth:1, borderRadius:10, padding:10}}
           ></TextInput>
-          <View>
-            <Pressable>
+          <View
+          style={{flexDirection:"row", gap:10, flexWrap: "wrap"}}>
+            <Pressable onPress={handleRegister}
+            style={{padding:10, borderWidth:1, borderRadius:10}}>
               <Text>Criar conta</Text>
             </Pressable>
-            <Pressable>
+            <Pressable
+            style={{padding:10, borderWidth:1, borderRadius:10}}>
               <Text>Login</Text>
             </Pressable>
-            <Pressable>
+            <Pressable
+            style={{padding:10, borderWidth:1, borderRadius:10}}>
               <Text>Logout</Text>
             </Pressable>
           </View>
         </View>
-        <View>
-          <Text>Firestore</Text>
+        <View style={{padding:12, borderWidth:1, borderRadius:12, gap:10, marginTop:5}}>
+          <Text style={{fontSize:16, fontWeight: "600"}}
+          >Firestore</Text>
           <TextInput
             value={noteText}
             onChangeText={setNoteText}
             placeholder="Texto da anotação"
+            style={{borderWidth:1, borderRadius:10, padding:10}}
           ></TextInput>
-          <View>
-            <Pressable><Text>Salvar nota</Text></Pressable>
-            <Pressable><Text>Recarregar</Text></Pressable>
+          <View style={{flexDirection:"row", gap:10, flexWrap:"wrap"}}>
+            <Pressable
+            style={{padding:10, borderWidth:1, borderRadius:10}}><Text>Salvar nota</Text></Pressable>
+            <Pressable
+            style={{padding:10, borderWidth:1, borderRadius:10}}><Text>Recarregar</Text></Pressable>
           </View>
           <View>
             {notes.map(n => (
