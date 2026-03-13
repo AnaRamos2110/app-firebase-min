@@ -42,3 +42,4 @@ yarn-error.*
 /android
 node_modules
 rascunho.txt
+.env
